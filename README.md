@@ -113,8 +113,3 @@ See also the list of [contributors](https://github.com/bivt-cap/bivt-backend/con
 ## License
 
 This project is licensed under the GNU GENERAL PUBLIC License - see the [LICENSE.md](https://github.com/bivt-cap/bivt-backend/blob/master/LICENSE) file for details
-
-## Acknowledgments
-
-- Readme template inspired in [PurpleBooth/README-Template.md](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-- Documentation of our API was generated using [APIDOC](https://apidocjs.com/)
