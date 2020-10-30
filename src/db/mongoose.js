@@ -12,16 +12,3 @@ moongose
   .catch((err) => {
     console.log(err);
   });
-
-//Task modal
-const Task = moongose.model("Task", {
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-});
