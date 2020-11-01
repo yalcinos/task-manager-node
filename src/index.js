@@ -59,8 +59,8 @@ app.patch("/users/:id", async (req, res) => {
   }
 
   try {
-    //new:true will return the existing user.
-    //Validate the typr of body is same as modal.
+    //new:true will return the modified user.
+    //Validate the type of body is same as modal.
     const user = await User.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
@@ -103,7 +103,9 @@ app.post("/tasks", (req, res) => {
     });
 });
 
-//Get all Tasks
+/*
+ * Get All tasks
+ */
 app.get("/tasks", async (req, res) => {
   Task.find({})
     .then((tasks) => {
@@ -114,7 +116,9 @@ app.get("/tasks", async (req, res) => {
     });
 });
 
-// Get Task by ID
+/*
+ * Get Task By Id
+ */
 app.get("/tasks/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -128,4 +132,30 @@ app.get("/tasks/:id", async (req, res) => {
   }
 });
 
+/*
+ * Update Task
+ */
+app.patch("/tasks/:id", async (req, res) => {
+  const id = req.params.id;
+  const updates = Object.keys(req.body);
+  const allowedUpdatesField = ["description", "completed"];
+  const isValidOperation = updates.every((update) => {
+    return allowedUpdatesField.includes(update);
+  });
+  if (!isValidOperation) {
+    res.status(400).send({ error: "Invalid updates" });
+  }
+  try {
+    const task = await Task.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!task) {
+      return res.status(404).send();
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 app.listen(3000);
