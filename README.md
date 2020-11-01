@@ -45,7 +45,7 @@ code .
 5. Run this project - We are using [nodemon](https://www.npmjs.com/package/nodemon) to automatically restarting the node application when file changes in the directory are detected
 
 ```
-nodemon moongoose.js
+npm start or nodemon src/index.js
 ```
 
 ## Version Control
@@ -75,29 +75,11 @@ An example of your commit description
 feat [#1] - New endpoint returning all Provinces in Canada
 ```
 
-## Documentation
-
-Every endpoint needs to be documented. We are using [APIDOC](https://apidocjs.com/) to help in this process.
-
-Please access the [APIDOC documentation ](https://apidocjs.com/#params) to understand how to use it.
-
-You need to install the APIDOC node package globally.
-
-```
-npm install apidoc -g
-```
-
-To update the documentation you need to execute this command.
-
-```
-apidoc -e node_modules/
-```
-
 ## Built With
 
 - [Node.JS](https://nodejs.org/en/) - JavaScript runtime built on Chrome's V8 JavaScript engine.
 - [Express](http://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js
-- [MySQL](https://www.mysql.com/) - Open-source relational database management system (RDBMS).
+- [MongoDB](https://www.mongodb.com/) - An object-oriented, simple, dynamic, and scalable NoSQL database
 
 ## Authors
 
