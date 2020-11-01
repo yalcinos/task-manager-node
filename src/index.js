@@ -2,12 +2,16 @@ const express = require("express");
 require("./db/mongoose");
 const User = require("./models/user");
 const Task = require("./models/task");
+const { reset } = require("nodemon");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+/*
+ * Create a user
+ */
 app.post("/users", async (req, res) => {
   const user = new User(req.body);
   try {
@@ -19,19 +23,9 @@ app.post("/users", async (req, res) => {
   }
 });
 
-//POST request for tasks
-app.post("/tasks", (req, res) => {
-  const task = new Task(req.body);
-  task
-    .save()
-    .then(() => {
-      res.status(201).send(task);
-    })
-    .catch((err) => {
-      res.status(400).send(err);
-    });
-});
-//Get all users
+/*
+ * Get All Users Info
+ */
 app.get("/users", async (req, res) => {
   try {
     const users = await User.find({});
@@ -48,6 +42,38 @@ app.get("/users", async (req, res) => {
   //     });
 });
 
+/*
+ * Update User Information
+ */
+app.patch("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const updates = Object.keys(req.body);
+  const allowedUpdatesField = ["name", "email", "password", "age"];
+  //Check if the body of request is same as the field that we decided.
+  const isValidOperation = updates.every((update) => {
+    return allowedUpdatesField.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid updates" });
+  }
+
+  try {
+    //new:true will return the existing user.
+    //Validate the typr of body is same as modal.
+    const user = await User.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
 // Get User by ID
 app.get("/users/:id", async (req, res) => {
   const id = req.params.id;
@@ -60,6 +86,21 @@ app.get("/users/:id", async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+});
+
+/*
+ * Create Task
+ */
+app.post("/tasks", (req, res) => {
+  const task = new Task(req.body);
+  task
+    .save()
+    .then(() => {
+      res.status(201).send(task);
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
 });
 
 //Get all Tasks
