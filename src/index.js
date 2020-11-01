@@ -42,6 +42,19 @@ app.get("/users", async (req, res) => {
   //     });
 });
 
+// Get User by ID
+app.get("/users/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send({ error: "There is no user with this ID" });
+    } else res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 /*
  * Update User Information
  */
@@ -66,7 +79,7 @@ app.patch("/users/:id", async (req, res) => {
       runValidators: true,
     });
     if (!user) {
-      return res.status(404).send();
+      return res.status(404).send({ error: "There is no user with this ID" });
     }
     res.send(user);
   } catch (error) {
@@ -74,20 +87,20 @@ app.patch("/users/:id", async (req, res) => {
   }
 });
 
-// Get User by ID
-app.get("/users/:id", async (req, res) => {
-  const id = req.params.id;
-
+/*
+ * Delete user
+ */
+app.delete("/users/:id", async (req, res) => {
   try {
-    const user = await User.findById(id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
-      return res.status(404).send();
-    } else res.status(200).send(user);
+      res.status(404).send({ error: "There is no user with this ID" });
+    }
+    res.send(user);
   } catch (error) {
     res.status(500).send(error);
   }
 });
-
 /*
  * Create Task
  */
@@ -125,7 +138,7 @@ app.get("/tasks/:id", async (req, res) => {
   try {
     const task = await Task.findById(id);
     if (!task) {
-      return res.status(404).send();
+      return res.status(404).send({ error: "There is no task with this ID" });
     } else res.status(200).send(user);
   } catch (error) {
     res.status(500).send(error);
@@ -151,11 +164,26 @@ app.patch("/tasks/:id", async (req, res) => {
       runValidators: true,
     });
     if (!task) {
-      return res.status(404).send();
+      return res.status(404).send({ error: "There is no task with this ID" });
     }
     res.send(task);
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+/*
+ * Delete task
+ */
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) {
+      res.status(404).send({ error: "There is no task with this ID" });
+    }
+    res.send(task);
+  } catch (error) {
+    res.status(500).send(error);
   }
 });
 app.listen(3000);
