@@ -14,11 +14,6 @@ To be able to code in this project you need to install on your machine:
 2. [Git](https://git-scm.com/) - A free and open source distributed version control system.
 3. [Visual Studio Code](https://code.visualstudio.com/) - A source-code editor developed by Microsoft for Windows, Linux and macOS.
 
-After installing Visual Studio Code, you need to install these two extensions:
-
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - ESLint is a tool for identifying and reporting on patterns found in JavaScript code, with the goal of making code more consistent and avoiding bugs.
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) - Prettier is an opinionated code formatter. It enforces a consistent style by parsing your code and re-printing it with its own rules that take the maximum line length into account, wrapping code when necessary.
-
 ### Installing
 
 A step by step to get a development env running
@@ -50,7 +45,7 @@ code .
 5. Run this project - We are using [nodemon](https://www.npmjs.com/package/nodemon) to automatically restarting the node application when file changes in the directory are detected
 
 ```
-nodemon moongoose.js
+npm start or nodemon src/index.js
 ```
 
 ## Version Control
@@ -80,29 +75,11 @@ An example of your commit description
 feat [#1] - New endpoint returning all Provinces in Canada
 ```
 
-## Documentation
-
-Every endpoint needs to be documented. We are using [APIDOC](https://apidocjs.com/) to help in this process.
-
-Please access the [APIDOC documentation ](https://apidocjs.com/#params) to understand how to use it.
-
-You need to install the APIDOC node package globally.
-
-```
-npm install apidoc -g
-```
-
-To update the documentation you need to execute this command.
-
-```
-apidoc -e node_modules/
-```
-
 ## Built With
 
 - [Node.JS](https://nodejs.org/en/) - JavaScript runtime built on Chrome's V8 JavaScript engine.
 - [Express](http://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js
-- [MySQL](https://www.mysql.com/) - Open-source relational database management system (RDBMS).
+- [MongoDB](https://www.mongodb.com/) - An object-oriented, simple, dynamic, and scalable NoSQL database
 
 ## Authors
 
