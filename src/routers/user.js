@@ -1,4 +1,5 @@
 const express = require("express");
+const { reset } = require("nodemon");
 const User = require("../models/user");
 const router = new express.Router();
 
@@ -11,6 +12,19 @@ router.post("/users", async (req, res) => {
     //Everything will run after user.save function finish
     await user.save();
     res.status(201).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+router.post("/users/login", async (req, res) => {
+  try {
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    console.log(user);
+    res.status(200).send(user);
   } catch (error) {
     res.status(400).send(error);
   }

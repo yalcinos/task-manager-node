@@ -7,6 +7,7 @@ const userSchema = new moongose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
     trim: true,
     lowercase: true,
     validate(value) {
@@ -36,6 +37,17 @@ const userSchema = new moongose.Schema({
     },
   },
 });
+userSchema.statics.findByCredentials = async (email, password) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("Unable to login");
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new Error("Unable to login");
+  }
+  return user;
+};
 
 //Pre: get executed before users are saved to the DB. It is middleware. It is similar like SQL Trigger!
 //next params: next will call after the function execution is done.
