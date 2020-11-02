@@ -1,8 +1,8 @@
 const moongose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
-//User modal
-const User = moongose.model("User", {
+const userSchema = new moongose.Schema({
   name: { type: String, required: true, trim: true },
   email: {
     type: String,
@@ -36,4 +36,17 @@ const User = moongose.model("User", {
     },
   },
 });
+
+//Pre: get executed before users are saved to the DB. It is middleware. It is similar like SQL Trigger!
+//next params: next will call after the function execution is done.
+//Before save the user into DB , hash password.
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
+//User modal
+const User = moongose.model("User", userSchema);
 module.exports = User;
