@@ -1,6 +1,7 @@
 const moongose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new moongose.Schema({
   name: { type: String, required: true, trim: true },
@@ -36,7 +37,24 @@ const userSchema = new moongose.Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
+
+//Generate token and save the token to the DB. And send back to user.
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, "token");
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+  return token;
+};
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {

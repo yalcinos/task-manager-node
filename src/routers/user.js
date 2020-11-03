@@ -4,14 +4,15 @@ const User = require("../models/user");
 const router = new express.Router();
 
 /*
- * Create a user
+ * Create a user(Signup)
  */
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
   try {
     //Everything will run after user.save function finish
+    const token = await user.generateAuthToken();
     await user.save();
-    res.status(201).send(user);
+    res.status(201).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -23,8 +24,9 @@ router.post("/users/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
+    const token = await user.generateAuthToken();
     console.log(user);
-    res.status(200).send(user);
+    res.status(200).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
   }
