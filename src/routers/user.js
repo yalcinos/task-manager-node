@@ -30,7 +30,7 @@ router.post("/users/login", async (req, res) => {
     //Create token for user
     const token = await user.generateAuthToken();
     console.log(user);
-    res.status(200).send({ user: user.getPublicProfile(), token });
+    res.status(200).send({ user, token });
   } catch (error) {
     res.status(400).send(error);
   }
@@ -66,31 +66,19 @@ router.post("/users/logoutAll", auth, async (req, res) => {
   }
 });
 /*
- * Get All Users Info
+ * Get User Info
  * auth is middleware function
  */
 router.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
 });
 
-// Get User by ID
-router.get("/users/:id", async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).send({ error: "There is no user with this ID" });
-    } else res.status(200).send(user);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
 /*
  * Update User Information
+ * /users/:id endpoint is not safe because user may update other user information if they know the user id.
+ * Using /users/me instead.
  */
-router.patch("/users/:id", async (req, res) => {
-  const id = req.params.id;
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdatesField = ["name", "email", "password", "age"];
   //Check if the body of request is same as the field that we decided.
@@ -105,20 +93,11 @@ router.patch("/users/:id", async (req, res) => {
   try {
     //new:true will return the modified user.
     //Validate the type of body is same as modal.
-    const user = await User.findById(id);
-
     updates.forEach((update) => {
-      user[update] = req.body[update];
+      req.user[update] = req.body[update];
     });
-    await user.save();
-    // const user = await User.findByIdAndUpdate(id, req.body, {
-    //   new: true,
-    //   runValidators: true,
-    // });
-    if (!user) {
-      return res.status(404).send({ error: "There is no user with this ID" });
-    }
-    res.send(user);
+    await req.user.save();
+    res.send(req.user);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -127,13 +106,10 @@ router.patch("/users/:id", async (req, res) => {
 /*
  * Delete user
  */
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      res.status(404).send({ error: "There is no user with this ID" });
-    }
-    res.send(user);
+    await req.user.remove();
+    res.send(req.user);
   } catch (error) {
     res.status(500).send(error);
   }

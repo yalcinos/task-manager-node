@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 // With Middleware => new request => do something => run route handler
+// This middleware function helps to check client token and if it is valid return user informations
 const auth = async (req, res, next) => {
   try {
     //get token from user.

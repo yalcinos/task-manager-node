@@ -47,7 +47,11 @@ const userSchema = new moongose.Schema({
   ],
 });
 
-userSchema.methods.getPublicProfile = function () {
+/*
+ * Filter the user data that we want to send back to user.
+ * toJSON is similar to JSON.stringyfy()
+ */
+userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
