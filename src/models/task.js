@@ -1,5 +1,4 @@
 const moongose = require("mongoose");
-const validator = require("validator");
 
 //Task modal
 const Task = moongose.model("Task", {
@@ -11,6 +10,10 @@ const Task = moongose.model("Task", {
   completed: {
     type: Boolean,
     default: false,
+  },
+  owner: {
+    type: moongose.Schema.Types.ObjectId,
+    required: true,
   },
 });
 module.exports = Task;
