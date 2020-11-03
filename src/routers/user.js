@@ -36,6 +36,9 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+/*
+ * Logout from single session
+ */
 router.post("/users/logout", auth, async (req, res) => {
   try {
     // once user logout delete only used token. If he has 3 session for different platform , we dont want to delete all token.
@@ -43,6 +46,19 @@ router.post("/users/logout", auth, async (req, res) => {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;
     });
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+/*
+ * Logout from all sessions
+ */
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
     await req.user.save();
     res.send();
   } catch (error) {
