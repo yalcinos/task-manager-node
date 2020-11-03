@@ -18,12 +18,16 @@ router.post("/users", async (req, res) => {
   }
 });
 
+/*
+ * Login User
+ */
 router.post("/users/login", async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.body.email,
       req.body.password
     );
+    //Create token for user
     const token = await user.generateAuthToken();
     console.log(user);
     res.status(200).send({ user, token });
@@ -32,6 +36,19 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    // once user logout delete only used token. If he has 3 session for different platform , we dont want to delete all token.
+    // when he logout from android device.
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 /*
  * Get All Users Info
  * auth is middleware function
