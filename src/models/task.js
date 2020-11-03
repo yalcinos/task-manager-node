@@ -14,6 +14,7 @@ const Task = moongose.model("Task", {
   owner: {
     type: moongose.Schema.Types.ObjectId,
     required: true,
+    ref: "User",
   },
 });
 module.exports = Task;

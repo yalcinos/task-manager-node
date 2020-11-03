@@ -47,6 +47,15 @@ const userSchema = new moongose.Schema({
   ],
 });
 
+// This virtual is not stored in the DB. This helps to figure out who ownes what and how they related.
+userSchema.virtual("tasks", {
+  ref: "Task",
+  // localfield is userid that has relationship between task owner field that also is userid.
+  localField: "_id",
+  // its like foreign key
+  foreignField: "owner",
+});
+
 /*
  * Filter the user data that we want to send back to user.
  * toJSON is similar to JSON.stringyfy()

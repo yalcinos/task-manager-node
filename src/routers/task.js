@@ -20,29 +20,36 @@ router.post("/tasks", auth, async (req, res) => {
 });
 
 /*
- * Get All tasks
+ * Get All tasks for a specific user
  */
-router.get("/tasks", async (req, res) => {
-  Task.find({})
-    .then((tasks) => {
-      res.status(200).send(tasks);
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
+router.get("/tasks", auth, async (req, res) => {
+  try {
+    //const tasks = await Task.find({ owner: req.user._id });
+    await req.user.populate("tasks").execPopulate();
+    res.send(req.user.tasks);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  // Task.find({ owner: req.user._id })
+  //   .then((tasks) => {
+  //     res.status(200).send(tasks);
+  //   })
+  //   .catch((err) => {
+  //     res.status(500).send(err);
+  //   });
 });
 
 /*
  * Get Task By Id
  */
-router.get("/tasks/:id", async (req, res) => {
-  const id = req.params.id;
-
+router.get("/tasks/:id", auth, async (req, res) => {
+  const _id = req.params.id;
   try {
-    const task = await Task.findById(id);
+    const task = await Task.findOne({ _id, owner: req.user._id });
     if (!task) {
       return res.status(404).send({ error: "There is no task with this ID" });
-    } else res.status(200).send(user);
+    }
+    res.status(200).send(task);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -51,7 +58,7 @@ router.get("/tasks/:id", async (req, res) => {
 /*
  * Update Task
  */
-router.patch("/tasks/:id", async (req, res) => {
+router.patch("/tasks/:id", auth, async (req, res) => {
   const id = req.params.id;
   const updates = Object.keys(req.body);
   const allowedUpdatesField = ["description", "completed"];
@@ -62,14 +69,18 @@ router.patch("/tasks/:id", async (req, res) => {
     res.status(400).send({ error: "Invalid updates" });
   }
   try {
-    const task = await Task.findById(id);
+    //const task = await Task.findById(id);
+    const task = await Task.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+    if (!task) {
+      return res.status(404).send({ error: "Can't authorized!" });
+    }
     updates.forEach((update) => {
       task[update] = req.body[update];
     });
     await task.save();
-    if (!task) {
-      return res.status(404).send({ error: "There is no task with this ID" });
-    }
     res.send(task);
   } catch (error) {
     res.status(400).send(error);
@@ -79,11 +90,17 @@ router.patch("/tasks/:id", async (req, res) => {
 /*
  * Delete task
  */
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/tasks/:id", auth, async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    //const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
     if (!task) {
-      res.status(404).send({ error: "There is no task with this ID" });
+      res.status(404).send({
+        error: "Can't find task or Can't authorized for deleting the task",
+      });
     }
     res.send(task);
   } catch (error) {
