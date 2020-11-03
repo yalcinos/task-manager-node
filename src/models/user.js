@@ -47,6 +47,13 @@ const userSchema = new moongose.Schema({
   ],
 });
 
+userSchema.methods.getPublicProfile = function () {
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.password;
+  delete userObject.tokens;
+  return userObject;
+};
 //Generate token and save the token to the DB. And send back to user.
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
@@ -55,6 +62,7 @@ userSchema.methods.generateAuthToken = async function () {
   await user.save();
   return token;
 };
+
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
