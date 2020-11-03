@@ -2,7 +2,7 @@ const express = require("express");
 const { reset } = require("nodemon");
 const User = require("../models/user");
 const router = new express.Router();
-
+const auth = require("../middleware/auth");
 /*
  * Create a user(Signup)
  */
@@ -34,21 +34,10 @@ router.post("/users/login", async (req, res) => {
 
 /*
  * Get All Users Info
+ * auth is middleware function
  */
-router.get("/users", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-  //   User.find({})
-  //     .then((tasks) => {
-  //       res.status(200).send(tasks);
-  //     })
-  //     .catch((err) => {
-  //       res.status(500).send(err);
-  //     });
+router.get("/users/me", auth, async (req, res) => {
+  res.send(req.user);
 });
 
 // Get User by ID
