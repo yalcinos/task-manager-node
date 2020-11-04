@@ -2,6 +2,7 @@ const moongose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Task = require("./task");
 
 const userSchema = new moongose.Schema({
   name: { type: String, required: true, trim: true },
@@ -98,6 +99,14 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
+
+//Delete user tasks when the user account is removed
+userSchema.pre("remove", async function (next) {
+  const user = this;
+  await Task.deleteMany({ owner: user._id });
+  next();
+});
+
 //User modal
 const User = moongose.model("User", userSchema);
 module.exports = User;
