@@ -21,10 +21,12 @@ router.post("/tasks", auth, async (req, res) => {
 
 /*
  * Get All tasks for a specific user
+ * Get /tasks?limit:10&skip:20 => get 3th page.
  */
 router.get("/tasks", auth, async (req, res) => {
   const match = {};
 
+  //Get all task which is done!
   if (req.query.completed) {
     match.completed = req.query.completed === "true";
   }
@@ -34,6 +36,10 @@ router.get("/tasks", auth, async (req, res) => {
       .populate({
         path: "tasks",
         match,
+        options: {
+          limit: parseInt(req.query.limit),
+          skip: parseInt(req.query.skip),
+        },
       })
       .execPopulate();
     res.send(req.user.tasks);
