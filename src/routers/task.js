@@ -53,13 +53,6 @@ router.get("/tasks", auth, async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
-  // Task.find({ owner: req.user._id })
-  //   .then((tasks) => {
-  //     res.status(200).send(tasks);
-  //   })
-  //   .catch((err) => {
-  //     res.status(500).send(err);
-  //   });
 });
 
 /*
@@ -92,13 +85,12 @@ router.patch("/tasks/:id", auth, async (req, res) => {
     res.status(400).send({ error: "Invalid updates" });
   }
   try {
-    //const task = await Task.findById(id);
     const task = await Task.findOne({
-      _id: req.params.id,
+      _id: id,
       owner: req.user._id,
     });
     if (!task) {
-      return res.status(404).send({ error: "Can't authorized!" });
+      return res.status(404).send({ error: "Can't not find it!" });
     }
     updates.forEach((update) => {
       task[update] = req.body[update];
