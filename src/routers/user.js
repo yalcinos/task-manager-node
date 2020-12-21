@@ -1,5 +1,6 @@
 const express = require("express");
 const { reset } = require("nodemon");
+const multer = require("multer");
 const User = require("../models/user");
 const router = new express.Router();
 const auth = require("../middleware/auth");
@@ -113,6 +114,13 @@ router.delete("/users/me", auth, async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+});
+
+//Creates avatars folder.
+const upload = multer({ dest: "avatars" });
+
+router.post("/users/me/avatar", upload.single("avatar"), async (req, res) => {
+  res.send(200);
 });
 
 module.exports = router;
