@@ -117,7 +117,19 @@ router.delete("/users/me", auth, async (req, res) => {
 });
 
 //Creates avatars folder.
-const upload = multer({ dest: "avatars" });
+const upload = multer({
+  dest: "avatars",
+  limits: {
+    //1mb max.
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, calllback) {
+    if (!file.originalname.endsWith(".pdf")) {
+      return calllback(new Error("File must be PDF!"));
+    }
+    calllback(undefined, true);
+  },
+});
 
 router.post("/users/me/avatar", upload.single("avatar"), async (req, res) => {
   res.send(200);
