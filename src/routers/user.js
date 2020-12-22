@@ -124,8 +124,8 @@ const upload = multer({
     fileSize: 1000000,
   },
   fileFilter(req, file, calllback) {
-    if (!file.originalname.endsWith(".pdf")) {
-      return calllback(new Error("File must be PDF!"));
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return calllback(new Error("Please upload an image"));
     }
     calllback(undefined, true);
   },
