@@ -47,6 +47,9 @@ const userSchema = new moongose.Schema(
         },
       },
     ],
+    avatar: {
+      type: Buffer,
+    },
   },
   {
     timestamps: true,
