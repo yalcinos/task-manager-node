@@ -74,8 +74,10 @@ userSchema.methods.toJSON = function () {
   const userObject = user.toObject();
   delete userObject.password;
   delete userObject.tokens;
+  delete userObject.avatar;
   return userObject;
 };
+
 //Generate token and save the token to the DB. And send back to user.
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
