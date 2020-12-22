@@ -22,9 +22,16 @@ const upload = multer({
   },
 });
 
-app.post("/upload", upload.single("upload"), async (req, res) => {
-  res.send(200);
-});
+app.post(
+  "/upload",
+  upload.single("upload"),
+  async (req, res) => {
+    res.send(200);
+  }, //After route handler run this function like callback
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
